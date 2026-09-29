@@ -10,7 +10,12 @@ public class Rook extends Piece {
     /**
      * The four straight directions, as {file, rank} deltas.
      */
-    private static final int[][] DIRECTIONS = { { 0, 1 }, { 1, 0 }, { 0, -1 }, { -1, 0 } };
+    private static final int[][] DIRECTIONS = {
+            {0, 1},
+            {1, 0},
+            {0, -1},
+            {-1, 0}
+    };
 
     public Rook(Color color) {
         super(color, PieceType.ROOK);
@@ -18,6 +23,6 @@ public class Rook extends Piece {
 
     @Override
     public List<Move> pseudoLegalMoves(Board board, Position from) {
-        throw new UnsupportedOperationException("M2: implement Rook.pseudoLegalMoves");
+        return slidingMoves(board, from, DIRECTIONS);
     }
 }

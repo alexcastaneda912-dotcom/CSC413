@@ -10,7 +10,12 @@ public class Bishop extends Piece {
     /**
      * The four diagonal directions, as {file, rank} deltas.
      */
-    private static final int[][] DIRECTIONS = { { 1, 1 }, { 1, -1 }, { -1, -1 }, { -1, 1 } };
+    private static final int[][] DIRECTIONS = {
+            {1, 1},
+            {1, -1},
+            {-1, -1},
+            {-1, 1}
+    };
 
     public Bishop(Color color) {
         super(color, PieceType.BISHOP);
@@ -18,6 +23,6 @@ public class Bishop extends Piece {
 
     @Override
     public List<Move> pseudoLegalMoves(Board board, Position from) {
-        throw new UnsupportedOperationException("M2: implement Bishop.pseudoLegalMoves");
+        return slidingMoves(board, from, DIRECTIONS);
     }
 }

@@ -14,28 +14,35 @@ import java.util.List;
  * than it saved:
  *
  * <ul>
- *   <li>both sibling classes had to loosen their tables from {@code private} to
- *       package-private, so a detail of how a rook moves became visible to
- *       every class in the package;
- *   <li>the arrays were <em>shared</em>, not copied — Java arrays cannot be made
- *       immutable, so any one of the three classes could have scribbled on data
- *       the other two depend on;
- *   <li>and a reader asking the simple question "which way does a queen move?"
- *       had to open two other files to find out.
+ *     <li>both sibling classes had to loosen their tables from {@code private} to
+ *         package-private, so a detail of how a rook moves became visible to
+ *         every class in the package;</li>
+ *     <li>the arrays were <em>shared</em>, not copied — Java arrays cannot be made
+ *         immutable, so any one of the three classes could have scribbled on data
+ *         the other two depend on;</li>
+ *     <li>and a reader asking the simple question "which way does a queen move?"
+ *         had to open two other files to find out.</li>
  * </ul>
  *
  * <p>Eight literal pairs answer that question on sight, and they do not couple
  * this class to anything. Duplication is not free, but it is cheaper here than
- * the coupling it would have bought us — which is the judgement call the DRY
- * principle actually asks you to make, rather than the reflex it is often
- * mistaken for.
+ * the coupling it would have bought us.
  */
 public class Queen extends Piece {
 
     /**
      * All eight directions: the four straight and the four diagonal.
      */
-    private static final int[][] DIRECTIONS = { { 0, 1 }, { 1, 0 }, { 0, -1 }, { -1, 0 }, { 1, 1 }, { 1, -1 }, { -1, -1 }, { -1, 1 } };
+    private static final int[][] DIRECTIONS = {
+            {0, 1},
+            {1, 0},
+            {0, -1},
+            {-1, 0},
+            {1, 1},
+            {1, -1},
+            {-1, -1},
+            {-1, 1}
+    };
 
     public Queen(Color color) {
         super(color, PieceType.QUEEN);
@@ -43,6 +50,6 @@ public class Queen extends Piece {
 
     @Override
     public List<Move> pseudoLegalMoves(Board board, Position from) {
-        throw new UnsupportedOperationException("M2: implement Queen.pseudoLegalMoves");
+        return slidingMoves(board, from, DIRECTIONS);
     }
 }

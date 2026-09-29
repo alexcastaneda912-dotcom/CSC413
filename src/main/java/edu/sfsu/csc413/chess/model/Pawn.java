@@ -8,22 +8,21 @@ import java.util.List;
  *
  * <p>It is the only piece that moves in just one direction, the only one whose
  * capture differs from its move, the only one with a special first move, and
- * the only one that turns into something else. It is worth noticing that all of
- * that awkwardness is contained in this one file. No other class in the engine
- * knows that pawns are strange. That containment is the payoff of polymorphism:
- * the irregular case costs one class, not a special case in every method that
- * touches a piece.
+ * the only one that turns into something else.
  *
- * <p>En passant is not handled here. Like castling, it depends on the previous
- * move rather than on the current board, so it waits for Week 15 when
- * {@code Game} owns the move history.
+ * <p>En passant is not handled here.
  */
 public class Pawn extends Piece {
 
     /**
      * What a pawn may become on reaching the far rank.
      */
-    private static final PieceType[] PROMOTION_CHOICES = { PieceType.QUEEN, PieceType.ROOK, PieceType.BISHOP, PieceType.KNIGHT };
+    private static final PieceType[] PROMOTION_CHOICES = {
+            PieceType.QUEEN,
+            PieceType.ROOK,
+            PieceType.BISHOP,
+            PieceType.KNIGHT
+    };
 
     public Pawn(Color color) {
         super(color, PieceType.PAWN);
@@ -31,22 +30,80 @@ public class Pawn extends Piece {
 
     @Override
     public List<Move> pseudoLegalMoves(Board board, Position from) {
-        throw new UnsupportedOperationException("M2: implement Pawn.pseudoLegalMoves");
+        List<Move> moves = new ArrayList<>();
+
+        int direction = color().pawnDirection();
+
+        Position oneStep = from.offsetOrNull(0, direction);
+
+        if (oneStep != null && board.pieceAt(oneStep) == null) {
+
+            if (oneStep.rank() == color().promotionRank()) {
+                for (PieceType promotionChoice : PROMOTION_CHOICES) {
+                    moves.add(
+                            Move.promotion(
+                                    from,
+                                    oneStep,
+                                    this,
+                                    null,
+                                    promotionChoice
+                            )
+                    );
+                }
+            } else {
+                moves.add(Move.quiet(from, oneStep, this));
+
+                if (from.rank() == color().pawnStartRank()) {
+                    Position twoStep = from.offsetOrNull(0, direction * 2);
+
+                    if (twoStep != null && board.pieceAt(twoStep) == null) {
+                        moves.add(Move.quiet(from, twoStep, this));
+                    }
+                }
+            }
+        }
+
+        int[] captureFiles = {-1, 1};
+
+        for (int fileDelta : captureFiles) {
+            Position target = from.offsetOrNull(fileDelta, direction);
+
+            if (target == null) {
+                continue;
+            }
+
+            Piece occupant = board.pieceAt(target);
+
+            if (occupant != null && occupant.color() != color()) {
+
+                if (target.rank() == color().promotionRank()) {
+                    for (PieceType promotionChoice : PROMOTION_CHOICES) {
+                        moves.add(
+                                Move.promotion(
+                                        from,
+                                        target,
+                                        this,
+                                        occupant,
+                                        promotionChoice
+                                )
+                        );
+                    }
+                } else {
+                    moves.add(Move.capture(from, target, this, occupant));
+                }
+            }
+        }
+
+        return moves;
     }
 
-    /**
-     * A pawn attacks the two squares diagonally ahead of it, whether or not
-     * anything stands there.
-     *
-     * <p>This override exists because the inherited version answers "can this
-     * piece move to that square", and for a pawn that is the wrong question.
-     * An empty square in front of a pawn is a square the pawn can move to but
-     * does <em>not</em> attack — which matters enormously for king safety: a
-     * king may not be blocked from a square merely because a pawn could advance
-     * onto it, but it certainly may not step onto a square a pawn guards.
-     */
     @Override
     public boolean attacks(Board board, Position from, Position target) {
-        throw new UnsupportedOperationException("M2: implement Pawn.attacks");
+        int direction = color().pawnDirection();
+
+        Position leftAttack = from.offsetOrNull(-1, direction);
+        Position rightAttack = from.offsetOrNull(1, direction);
+
+        return target.equals(leftAttack) || target.equals(rightAttack);
     }
 }
