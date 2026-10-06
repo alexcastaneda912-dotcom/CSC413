@@ -22,6 +22,36 @@ public class Board {
         squares[position.file()][position.rank()] = piece;
     }
 
+    public void apply(Move move) {
+        Piece arriving = move.isPromotion()
+                ? createPromoted(move.promotesTo(), move.moved().color())
+                : move.moved();
+
+        place(move.from(), null);
+        place(move.to(), arriving);
+    }
+
+    public void undo(Move move) {
+        place(move.from(), move.moved());
+        place(move.to(), move.captured());
+    }
+
+    /*
+     * Keep promotion construction inside model to avoid a dependency
+     * from model to factory. This duplicates four PieceFactory cases,
+     * so changes to those constructors must be maintained in both places.
+     */
+    private Piece createPromoted(PieceType type, Color color) {
+        return switch (type) {
+            case QUEEN -> new Queen(color);
+            case ROOK -> new Rook(color);
+            case BISHOP -> new Bishop(color);
+            case KNIGHT -> new Knight(color);
+            default -> throw new IllegalArgumentException(
+                    "Invalid promotion type: " + type);
+        };
+    }
+
     public List<Position> positionsOf(Color color) {
         List<Position> positions = new ArrayList<>();
 
