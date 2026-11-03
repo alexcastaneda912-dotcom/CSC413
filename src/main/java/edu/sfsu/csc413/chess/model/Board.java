@@ -68,6 +68,22 @@ public class Board {
         return positions;
     }
 
+    /**
+     * Returns the square occupied by the given color's king.
+     *
+     * @param color the color whose king to find
+     * @return the king's position, or null if that color has no king
+     */
+    public Position kingPosition(Color color) {
+        for (Position position : positionsOf(color)) {
+            if (pieceAt(position).type() == PieceType.KING) {
+                return position;
+            }
+        }
+
+        return null;
+    }
+
     @Override
     public String toString() {
         StringBuilder text = new StringBuilder();
