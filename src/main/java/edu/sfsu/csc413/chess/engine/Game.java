@@ -53,11 +53,31 @@ public class Game {
     }
 
     /**
-     * Returns every pseudo-legal move for the current side.
-     * King safety is added in M5.
+     * Returns every legal move for the current side,
+     * including the king-safety filter.
      */
     public List<Move> legalMoves() {
         return MoveGenerator.legalMoves(board, sideToMove);
+    }
+
+    /**
+     * Returns the current game status for the side to move.
+     * Delegates the rules to MoveGenerator.
+     *
+     * @return the current game status
+     */
+    public GameStatus status() {
+        return MoveGenerator.status(board, sideToMove);
+    }
+
+    /**
+     * Returns whether the game has ended in checkmate or stalemate.
+     * Being in check alone does not end the game.
+     *
+     * @return true if the current status ends the game
+     */
+    public boolean isGameOver() {
+        return status().isGameOver();
     }
 
     /**

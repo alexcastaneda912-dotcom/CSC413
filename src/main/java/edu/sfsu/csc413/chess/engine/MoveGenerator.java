@@ -48,6 +48,26 @@ public final class MoveGenerator {
     }
 
     /**
+     * Determines the game's status for the side to move.
+     * With no legal moves, check means checkmate; otherwise it is
+     * stalemate. With legal moves, play continues, possibly in check.
+     *
+     * @param board the board to examine
+     * @param sideToMove the side whose turn it is
+     * @return the current game status
+     */
+    public static GameStatus status(Board board, Color sideToMove) {
+        boolean inCheck = isInCheck(board, sideToMove);
+        boolean hasLegalMove = !legalMoves(board, sideToMove).isEmpty();
+
+        if (!hasLegalMove) {
+            return inCheck ? GameStatus.CHECKMATE : GameStatus.STALEMATE;
+        }
+
+        return inCheck ? GameStatus.CHECK : GameStatus.IN_PROGRESS;
+    }
+
+    /**
      * Returns whether color's king is attacked by the opposite color.
      * A side without a king is considered not in check.
      *
