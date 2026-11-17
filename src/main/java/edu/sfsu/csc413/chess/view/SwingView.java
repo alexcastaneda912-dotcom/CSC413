@@ -204,7 +204,7 @@ public final class SwingView implements BoardView {
                 }
             }
 
-            undoButton.setEnabled(!status.isGameOver());
+            undoButton.setEnabled(!game.history().isEmpty());
         });
     }
 
