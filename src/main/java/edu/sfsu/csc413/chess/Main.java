@@ -2,6 +2,8 @@ package edu.sfsu.csc413.chess;
 
 import edu.sfsu.csc413.chess.engine.Game;
 import edu.sfsu.csc413.chess.view.BoardView;
+import edu.sfsu.csc413.chess.view.SwingView;
+import edu.sfsu.csc413.chess.view.BorderView;
 import edu.sfsu.csc413.chess.view.ConsoleView;
 import edu.sfsu.csc413.chess.view.EmojiView;
 import edu.sfsu.csc413.chess.view.GameController;
@@ -15,7 +17,7 @@ public final class Main {
     /**
      * Starts an interactive chess game.
      *
-     * @param args use "emoji" as the first argument for chess figures
+     * @param args first argument: swing, border, emoji; default is console
      */
     public static void main(String[] args) {
         Game game = new Game();
@@ -23,6 +25,10 @@ public final class Main {
         BoardView view;
         if (args.length > 0 && args[0].equalsIgnoreCase("emoji")) {
             view = new EmojiView();
+        } else if (args.length > 0 && args[0].equalsIgnoreCase("swing")) {
+            view = new SwingView();
+        } else if (args.length > 0 && args[0].equalsIgnoreCase("border")) {
+            view = new BorderView();
         } else {
             view = new ConsoleView();
         }
