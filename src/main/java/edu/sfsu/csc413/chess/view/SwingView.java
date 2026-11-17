@@ -316,7 +316,7 @@ public final class SwingView implements BoardView {
 
                 if (selected || destination || hasFocus()) {
                     g.setColor(selected
-                            ? new Color(255, 190, 0)
+                            ? new Color(180, 90, 220)
                             : destination
                             ? new Color(0, 240, 110)
                             : Color.BLUE);
